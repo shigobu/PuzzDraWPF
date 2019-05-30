@@ -82,7 +82,12 @@ namespace パズドラWPF
         /// </summary>
         private Ellipse[,] FieldDrop = null;
 
-        public MainWindow()
+		/// <summary>
+		/// ドロップ移動用ウィンドウ
+		/// </summary>
+		DropWindow dropWind = null;
+
+		public MainWindow()
         {
             InitializeComponent();
 
@@ -121,7 +126,13 @@ namespace パズドラWPF
             {
                 for (int x = 0; x < Field.GetLength(1); x++)
                 {
+					//塗りつぶし色のしてい
                     FieldDrop[y, x].Fill = GetDropBrush(Field[y, x]);
+					//塗りつぶし色を透明にしても、縁が表示されちゃうから、非表示に。
+					if (Field[y, x] == DropState.None)
+					{
+						FieldDrop[y, x].Visibility = Visibility.Hidden;
+					}
                 }
             }
         }
@@ -163,14 +174,33 @@ namespace パズドラWPF
             return brush;
         }
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
         private void drop00_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (sender is Ellipse)
             {
-                DropWindow dropWind = new DropWindow(((Ellipse)sender).Fill);
+				//移動用ウィンドウ表示
+                dropWind = new DropWindow(((Ellipse)sender).Fill);
                 dropWind.Owner = this;
                 dropWind.Show();
+
+				//移動元ドロップ非表示
+				for (int y = 0; y < Field.GetLength(0); y++)
+				{
+					for (int x = 0; x < Field.GetLength(1); x++)
+					{
+						if (sender.Equals(FieldDrop[y, x]))
+						{
+							Field[y, x] = DropState.None;
+							DrawField();
+						}
+					}
+				}
             }
         }
-    }
+	}
 }

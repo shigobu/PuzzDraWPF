@@ -11,7 +11,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using System.Windows.Forms;
 
 namespace パズドラWPF
 {
@@ -33,15 +32,29 @@ namespace パズドラWPF
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            //マウスの中心に移動させる。
-        }
+			//マウスの中心に移動させる。
+			MoveToMousePos();
+
+		}
 
         /// <summary>
         /// マウスの中心に円の中心が来るように移動させます。
         /// </summary>
         internal void MoveToMousePos()
         {
-            System.Drawing.Point dp = System.Windows.Forms.Cursor.Position;
-        }
-    }
+            System.Drawing.Point cursorPoint = System.Windows.Forms.Cursor.Position;
+			this.Left = cursorPoint.X - 25;
+			this.Top = cursorPoint.Y - 25;
+		}
+
+		private void Window_MouseMove(object sender, MouseEventArgs e)
+		{
+			MoveToMousePos();
+		}
+
+		private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+		{
+			this.Close();
+		}
+	}
 }
