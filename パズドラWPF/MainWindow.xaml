@@ -5,22 +5,84 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:パズドラWPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="250" Width="300" ResizeMode="NoResize">
+        Title="MainWindow" SizeToContent="WidthAndHeight"  ResizeMode="NoResize">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="50" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
         </Grid.RowDefinitions>
+        <!--罫線の作成-->
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="0" Grid.Row="0"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="1" Grid.Row="0"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="2" Grid.Row="0"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="3" Grid.Row="0"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="4" Grid.Row="0"/>
+        <Border BorderThickness="0,0,0,1" BorderBrush="Black" Grid.Column="5" Grid.Row="0"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="0" Grid.Row="1"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="1" Grid.Row="1"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="2" Grid.Row="1"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="3" Grid.Row="1"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="4" Grid.Row="1"/>
+        <Border BorderThickness="0,0,0,1" BorderBrush="Black" Grid.Column="5" Grid.Row="1"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="0" Grid.Row="2"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="1" Grid.Row="2"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="2" Grid.Row="2"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="3" Grid.Row="2"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="4" Grid.Row="2"/>
+        <Border BorderThickness="0,0,0,1" BorderBrush="Black" Grid.Column="5" Grid.Row="2"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="0" Grid.Row="3"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="1" Grid.Row="3"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="2" Grid.Row="3"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="3" Grid.Row="3"/>
+        <Border BorderThickness="0,0,1,1" BorderBrush="Black" Grid.Column="4" Grid.Row="3"/>
+        <Border BorderThickness="0,0,0,1" BorderBrush="Black" Grid.Column="5" Grid.Row="3"/>
+        <Border BorderThickness="0,0,1,0" BorderBrush="Black" Grid.Column="0" Grid.Row="4"/>
+        <Border BorderThickness="0,0,1,0" BorderBrush="Black" Grid.Column="1" Grid.Row="4"/>
+        <Border BorderThickness="0,0,1,0" BorderBrush="Black" Grid.Column="2" Grid.Row="4"/>
+        <Border BorderThickness="0,0,1,0" BorderBrush="Black" Grid.Column="3" Grid.Row="4"/>
+        <Border BorderThickness="0,0,1,0" BorderBrush="Black" Grid.Column="4" Grid.Row="4"/>
+        <Border BorderThickness="0,0,0,0" BorderBrush="Black" Grid.Column="5" Grid.Row="4"/>
+        <!--ドロップの作成-->
+        <Ellipse x:Name="drop00" Margin="3" Fill="Red" Grid.Column="0" Grid.Row="0"/>
+        <Ellipse x:Name="drop01" Margin="3" Fill="Green" Grid.Column="1" Grid.Row="0"/>
+        <Ellipse x:Name="drop02" Margin="3" Fill="Blue" Grid.Column="2" Grid.Row="0"/>
+        <Ellipse x:Name="drop03" Margin="3" Fill="Purple" Grid.Column="3" Grid.Row="0"/>
+        <Ellipse x:Name="drop04" Margin="3" Fill="Yellow" Grid.Column="4" Grid.Row="0"/>
+        <Ellipse x:Name="drop05" Margin="3" Fill="Pink" Grid.Column="5" Grid.Row="0"/>
+        <Ellipse x:Name="drop10" Margin="3" Fill="Pink"   Grid.Column="0" Grid.Row="1"/>
+        <Ellipse x:Name="drop11" Margin="3" Fill="Red"    Grid.Column="1" Grid.Row="1"/>
+        <Ellipse x:Name="drop12" Margin="3" Fill="Green"  Grid.Column="2" Grid.Row="1"/>
+        <Ellipse x:Name="drop13" Margin="3" Fill="Blue"   Grid.Column="3" Grid.Row="1"/>
+        <Ellipse x:Name="drop14" Margin="3" Fill="Purple" Grid.Column="4" Grid.Row="1"/>
+        <Ellipse x:Name="drop15" Margin="3" Fill="Yellow" Grid.Column="5" Grid.Row="1"/>
+        <Ellipse x:Name="drop20" Margin="3" Fill="Yellow" Grid.Column="0" Grid.Row="2"/>
+        <Ellipse x:Name="drop21" Margin="3" Fill="Pink"   Grid.Column="1" Grid.Row="2"/>
+        <Ellipse x:Name="drop22" Margin="3" Fill="Red"    Grid.Column="2" Grid.Row="2"/>
+        <Ellipse x:Name="drop23" Margin="3" Fill="Green"  Grid.Column="3" Grid.Row="2"/>
+        <Ellipse x:Name="drop24" Margin="3" Fill="Blue"   Grid.Column="4" Grid.Row="2"/>
+        <Ellipse x:Name="drop25" Margin="3" Fill="Purple" Grid.Column="5" Grid.Row="2"/>
+        <Ellipse x:Name="drop30" Margin="3" Fill="Purple" Grid.Column="0" Grid.Row="3"/>
+        <Ellipse x:Name="drop31" Margin="3" Fill="Yellow" Grid.Column="1" Grid.Row="3"/>
+        <Ellipse x:Name="drop32" Margin="3" Fill="Pink"   Grid.Column="2" Grid.Row="3"/>
+        <Ellipse x:Name="drop33" Margin="3" Fill="Red"    Grid.Column="3" Grid.Row="3"/>
+        <Ellipse x:Name="drop34" Margin="3" Fill="Green"  Grid.Column="4" Grid.Row="3"/>
+        <Ellipse x:Name="drop35" Margin="3" Fill="Blue"   Grid.Column="5" Grid.Row="3"/>
+        <Ellipse x:Name="drop40" Margin="3" Fill="Blue"   Grid.Column="0" Grid.Row="4"/>
+        <Ellipse x:Name="drop41" Margin="3" Fill="Purple" Grid.Column="1" Grid.Row="4"/>
+        <Ellipse x:Name="drop42" Margin="3" Fill="Yellow" Grid.Column="2" Grid.Row="4"/>
+        <Ellipse x:Name="drop43" Margin="3" Fill="Pink"   Grid.Column="3" Grid.Row="4"/>
+        <Ellipse x:Name="drop44" Margin="3" Fill="Red"    Grid.Column="4" Grid.Row="4"/>
+        <Ellipse x:Name="drop45" Margin="3" Fill="Green"  Grid.Column="5" Grid.Row="4"/>
     </Grid>
 </Window>
