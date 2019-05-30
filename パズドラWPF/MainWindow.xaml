@@ -54,12 +54,12 @@
         <Border BorderThickness="0,0,1,0" BorderBrush="Black" Grid.Column="4" Grid.Row="4"/>
         <Border BorderThickness="0,0,0,0" BorderBrush="Black" Grid.Column="5" Grid.Row="4"/>
         <!--ドロップの作成-->
-        <Ellipse x:Name="drop00" Margin="3" Fill="Red" Grid.Column="0" Grid.Row="0"/>
-        <Ellipse x:Name="drop01" Margin="3" Fill="Green" Grid.Column="1" Grid.Row="0"/>
-        <Ellipse x:Name="drop02" Margin="3" Fill="Blue" Grid.Column="2" Grid.Row="0"/>
+        <Ellipse x:Name="drop00" Margin="3" Fill="Red"    Grid.Column="0" Grid.Row="0" MouseLeftButtonDown="drop00_MouseLeftButtonDown"/>
+        <Ellipse x:Name="drop01" Margin="3" Fill="Green"  Grid.Column="1" Grid.Row="0"/>
+        <Ellipse x:Name="drop02" Margin="3" Fill="Blue"   Grid.Column="2" Grid.Row="0"/>
         <Ellipse x:Name="drop03" Margin="3" Fill="Purple" Grid.Column="3" Grid.Row="0"/>
         <Ellipse x:Name="drop04" Margin="3" Fill="Yellow" Grid.Column="4" Grid.Row="0"/>
-        <Ellipse x:Name="drop05" Margin="3" Fill="Pink" Grid.Column="5" Grid.Row="0"/>
+        <Ellipse x:Name="drop05" Margin="3" Fill="Pink"   Grid.Column="5" Grid.Row="0"/>
         <Ellipse x:Name="drop10" Margin="3" Fill="Pink"   Grid.Column="0" Grid.Row="1"/>
         <Ellipse x:Name="drop11" Margin="3" Fill="Red"    Grid.Column="1" Grid.Row="1"/>
         <Ellipse x:Name="drop12" Margin="3" Fill="Green"  Grid.Column="2" Grid.Row="1"/>

@@ -162,5 +162,15 @@ namespace パズドラWPF
 
             return brush;
         }
+
+        private void drop00_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Ellipse)
+            {
+                DropWindow dropWind = new DropWindow(((Ellipse)sender).Fill);
+                dropWind.Owner = this;
+                dropWind.Show();
+            }
+        }
     }
 }
