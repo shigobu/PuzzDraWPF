@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Forms;
 
 namespace パズドラWPF
 {
@@ -40,7 +41,7 @@ namespace パズドラWPF
         /// </summary>
         internal void MoveToMousePos()
         {
-            
+            System.Drawing.Point dp = System.Windows.Forms.Cursor.Position;
         }
     }
 }
