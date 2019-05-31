@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -34,7 +35,6 @@ namespace パズドラWPF
         {
 			//マウスの中心に移動させる。
 			MoveToMousePos();
-
 		}
 
         /// <summary>
@@ -42,9 +42,12 @@ namespace パズドラWPF
         /// </summary>
         internal void MoveToMousePos()
         {
-            System.Drawing.Point cursorPoint = System.Windows.Forms.Cursor.Position;
-			this.Left = cursorPoint.X - 25;
-			this.Top = cursorPoint.Y - 25;
+            //マウス座標取得
+            Point mousePos = Common.GetMouseCursorPosition();
+
+            //ウィンドウ移動
+            this.Left = mousePos.X - (this.ActualWidth / 2);
+			this.Top = mousePos.Y - (this.ActualHeight / 2);
 		}
 
 		private void Window_MouseMove(object sender, MouseEventArgs e)

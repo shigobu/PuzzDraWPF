@@ -69,6 +69,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Common.cs" />
     <Compile Include="DropWindow.xaml.cs">
       <DependentUpon>DropWindow.xaml</DependentUpon>
     </Compile>
