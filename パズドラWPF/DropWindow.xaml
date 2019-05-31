@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:パズドラWPF"
         mc:Ignorable="d"
-        Title="DropWindow" Height="50" Width="50" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="None" AllowsTransparency="True" Background="Transparent" Loaded="Window_Loaded" MouseMove="Window_MouseMove" MouseLeftButtonUp="Window_MouseLeftButtonUp">
+        Title="DropWindow" Height="50" Width="50" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="None" AllowsTransparency="True" Background="Transparent" Loaded="Window_Loaded" MouseMove="Window_MouseMove" MouseLeftButtonUp="Window_MouseLeftButtonUp" Closed="Window_Closed" >
     <Grid>
         <Ellipse Margin="0" Fill="#33000000"/>
         <Ellipse Margin="1" Fill="#33000000"/>
