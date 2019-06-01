@@ -73,6 +73,7 @@
     <Compile Include="DropWindow.xaml.cs">
       <DependentUpon>DropWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Field.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

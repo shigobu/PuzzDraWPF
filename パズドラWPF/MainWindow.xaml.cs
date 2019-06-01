@@ -59,43 +59,13 @@ namespace パズドラWPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        /// <summary>
-        /// 盤面高さ
-        /// </summary>
-        internal const int FieldHeight = 5;
-        /// <summary>
-        /// 盤面幅
-        /// </summary>
-        internal const int FieldWidth  = 6;
-
-        /// <summary>
-        /// 盤面のドロップ状態を表します。
-        /// </summary>
-        internal DropState[,] Field = new DropState[FieldHeight, FieldWidth]
-        {
-            { DropState.None, DropState.None, DropState.None, DropState.None, DropState.None, DropState.None },
-            { DropState.None, DropState.None, DropState.None, DropState.None, DropState.None, DropState.None },
-            { DropState.None, DropState.None, DropState.None, DropState.None, DropState.None, DropState.None },
-            { DropState.None, DropState.None, DropState.None, DropState.None, DropState.None, DropState.None },
-            { DropState.None, DropState.None, DropState.None, DropState.None, DropState.None, DropState.None }
-        };
 
         /// <summary>
         /// 盤面に配置してある円オブジェクトを表します。
         /// </summary>
         internal Ellipse[,] FieldDrop = null;
 
-        /// <summary>
-        /// 接続チェックフラグ
-        /// </summary>
-        private bool[,] FieldChecked = new bool[FieldHeight, FieldWidth] 
-        { 
-            { false, false, false, false, false, false },
-            { false, false, false, false, false, false },
-            { false, false, false, false, false, false },
-            { false, false, false, false, false, false },
-            { false, false, false, false, false, false }
-        };
+		internal Field field = new Field();
 
         /// <summary>
         /// ドロップ移動用ウィンドウ
@@ -106,7 +76,7 @@ namespace パズドラWPF
         {
             InitializeComponent();
 
-            FieldDrop = new Ellipse[FieldHeight, FieldWidth]
+            FieldDrop = new Ellipse[Field.FieldHeight, Field.FieldWidth]
             { 
                 { drop00, drop01, drop02, drop03, drop04, drop05 },
                 { drop10, drop11, drop12, drop13, drop14, drop15 },
@@ -117,11 +87,11 @@ namespace パズドラWPF
 
             //盤面をランダムに設定
             Random random = new Random();
-            for(int y = 0; y < Field.GetLength(0); y++)
+            for(int y = 0; y < field.DropStates.GetLength(0); y++)
             {
-                for (int x = 0; x < Field.GetLength(1); x++)
+                for (int x = 0; x < field.DropStates.GetLength(1); x++)
                 {
-                    Field[y,x] = (DropState)random.Next((int)DropState.DropState1, (int)DropState.DropState6);
+					field.DropStates[y,x] = (DropState)random.Next((int)DropState.DropState1, (int)DropState.DropState6);
                 }
             }
 
@@ -140,14 +110,14 @@ namespace パズドラWPF
                 return;
             }
 
-            for (int y = 0; y < Field.GetLength(0); y++)
+            for (int y = 0; y < field.DropStates.GetLength(0); y++)
             {
-                for (int x = 0; x < Field.GetLength(1); x++)
+                for (int x = 0; x < field.DropStates.GetLength(1); x++)
                 {
 					//塗りつぶし色のしてい
-                    FieldDrop[y, x].Fill = GetDropBrush(Field[y, x]);
+                    FieldDrop[y, x].Fill = GetDropBrush(field.DropStates[y, x]);
 					//塗りつぶし色を透明にしても、縁が表示されちゃうから、非表示に。
-					if (Field[y, x] == DropState.None)
+					if (field.DropStates[y, x] == DropState.None)
 					{
 						FieldDrop[y, x].Visibility = Visibility.Hidden;
 					}
@@ -201,109 +171,60 @@ namespace パズドラWPF
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-        private void drop00_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private async void drop00_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (sender is Ellipse)
             {
-				//移動用ウィンドウ表示
+				//移動用ウィンドウ
                 dropWind = new DropWindow(((Ellipse)sender).Fill);
                 dropWind.Owner = this;
-                dropWind.Show();
 
 				//移動元ドロップ検索＆非表示
-				for (int y = 0; y < Field.GetLength(0); y++)
+				for (int y = 0; y < field.DropStates.GetLength(0); y++)
 				{
-					for (int x = 0; x < Field.GetLength(1); x++)
+					for (int x = 0; x < field.DropStates.GetLength(1); x++)
 					{
 						if (sender.Equals(FieldDrop[y, x]))
 						{
                             //移動用ウィンドウに、ドロップ状態渡す。
-                            dropWind.dropState = Field[y, x];
-                            //移動元ドロップを無しに変更して、再描画。
-                            Field[y, x] = DropState.None;
+                            dropWind.dropState = field.DropStates[y, x];
+							//移動元ドロップを無しに変更して、再描画。
+							field.DropStates[y, x] = DropState.None;
 							DrawField();
 						}
 					}
 				}
+
+				//表示
+                dropWind.ShowDialog();
+
+				//ドロップ状態無しを探して、移動中ドロップに状態を変更
+				for (int y = 0; y < field.DropStates.GetLength(0); y++)
+				{
+					for (int x = 0; x < field.DropStates.GetLength(1); x++)
+					{
+						if (field.DropStates[y, x] == DropState.None)
+						{
+							field.DropStates[y, x] = dropWind.dropState;
+						}
+					}
+				}
+				DrawField();
+
+				//消すドロップ一覧を取得
+			 	List<List<System.Drawing.Point>> groups = field.GetConnectedDropGroup();
+
+				foreach (var group in groups)
+				{
+					foreach (var point in group)
+					{
+						field.DropStates[point.Y, point.X] = DropState.None;
+					}
+
+					DrawField();
+					await Task.Delay(500);
+				}
             }
         }
-
-        /// <summary>
-        /// ドロップを削除して、ドロップを空いたところに落下させます。
-        /// </summary>
-        internal void DropRemoveAndDawn()
-        {
-            for (int y = 0; y < Field.GetLength(0); y++)
-            {
-                for (int x = 0; x < Field.GetLength(1); x++)
-                {
-                    int count = GetConnectedDropCount(y, x, Field[y, x], 0);
-                    if (count >= 3)
-                    {
-                        EraseConnectedDrop(y, x, Field[y, x]);
-                    }
-                }
-            }
-
-            //フラグリセット
-            for (int y = 0; y < FieldChecked.GetLength(0); y++)
-            {
-                for (int x = 0; x < FieldChecked.GetLength(1); x++)
-                {
-                    FieldChecked[y, x] = false;
-                }
-            }
-
-            DrawField();
-        }
-
-        /// <summary>
-        /// 同じドロップの接続されている個数を取得します。
-        /// </summary>
-        /// <param name="y"></param>
-        /// <param name="x"></param>
-        /// <param name="dropState"></param>
-        /// <param name="count"></param>
-        /// <returns></returns>
-        private int GetConnectedDropCount(int y, int x, DropState dropState, int count)
-        {
-            if (
-                x < 0 || y < 0 || y >= Field.GetLength(0) || x >= Field.GetLength(1) 
-                || FieldChecked[y, x]
-                || Field[y, x] == DropState.None
-                || Field[y, x] != dropState
-                )
-            {
-                return count;
-            }
-
-            count++;
-            FieldChecked[y, x] = true;
-
-            count = GetConnectedDropCount(y, x - 1, dropState, count);
-            count = GetConnectedDropCount(y - 1, x, dropState, count);
-            count = GetConnectedDropCount(y, x + 1, dropState, count);
-            count = GetConnectedDropCount(y + 1, x, dropState, count);
-            return count;
-        }
-
-        private void EraseConnectedDrop(int y, int x, DropState dropState)
-        {
-            if (
-                x < 0 || y < 0 || y >= Field.GetLength(0) || x >= Field.GetLength(1)
-                || Field[y, x] == DropState.None
-                || Field[y, x] != dropState
-                )
-            {
-                return;
-            }
-
-            Field[y, x] = DropState.None;
-
-            EraseConnectedDrop(y, x - 1, dropState);
-            EraseConnectedDrop(y - 1, x, dropState);
-            EraseConnectedDrop(y, x + 1, dropState);
-            EraseConnectedDrop(y + 1, x, dropState);
-        }
-    }
+	}
 }

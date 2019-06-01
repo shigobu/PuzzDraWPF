@@ -22,7 +22,7 @@ namespace パズドラWPF
     {
         private MainWindow ownerWindow = null;
 
-        private Rect[,] DropRectArr = new Rect[MainWindow.FieldHeight, MainWindow.FieldWidth];
+        private Rect[,] DropRectArr = new Rect[Field.FieldHeight, Field.FieldWidth];
 
         internal DropState dropState = DropState.None;
 
@@ -48,9 +48,9 @@ namespace パズドラWPF
             //ドロップの矩形を計算して格納
             if (ownerWindow != null)
             {
-                for (int y = 0; y < ownerWindow.Field.GetLength(0); y++)
+                for (int y = 0; y < ownerWindow.field.DropStates.GetLength(0); y++)
                 {
-                    for (int x = 0; x < ownerWindow.Field.GetLength(1); x++)
+                    for (int x = 0; x < ownerWindow.field.DropStates.GetLength(1); x++)
                     {
                         Point dropPos = ownerWindow.FieldDrop[y, x].PointToScreen(new Point(0, 0));
                         DropRectArr[y, x] = new Rect(dropPos, new Size(44, 44));//サイズは、50のマージンが３だから、50-3。
@@ -96,15 +96,15 @@ namespace パズドラWPF
             }
 
             //マウスがドロップ領域に入っているか確認して、入れ替え。
-            for (int y = 0; y < ownerWindow.Field.GetLength(0); y++)
+            for (int y = 0; y < ownerWindow.field.DropStates.GetLength(0); y++)
             {
-                for (int x = 0; x < ownerWindow.Field.GetLength(1); x++)
+                for (int x = 0; x < ownerWindow.field.DropStates.GetLength(1); x++)
                 {
                     //rect領域に入っているか確認
                     if (DropRectArr[y, x].Contains(mousePoint))
                     {
                         //ドロップ状態が無し(移動元のドロップ)だったら終了
-                        if (ownerWindow.Field[y, x] == DropState.None)
+                        if (ownerWindow.field.DropStates[y, x] == DropState.None)
                         {
                             return;
                         }
@@ -129,44 +129,44 @@ namespace パズドラWPF
             if (x > 0)
             {
                 int tonariX = x - 1;
-                if (ownerWindow.Field[y, tonariX] == DropState.None)
+                if (ownerWindow.field.DropStates[y, tonariX] == DropState.None)
                 {
-                    DropState temp = ownerWindow.Field[y, x];
-                    ownerWindow.Field[y, x] = ownerWindow.Field[y, tonariX];
-                    ownerWindow.Field[y, tonariX] = temp;
+                    DropState temp = ownerWindow.field.DropStates[y, x];
+                    ownerWindow.field.DropStates[y, x] = ownerWindow.field.DropStates[y, tonariX];
+                    ownerWindow.field.DropStates[y, tonariX] = temp;
                 }
             }
             //右と入れ替え
-            if (x < ownerWindow.Field.GetLength(1) - 1)
+            if (x < ownerWindow.field.DropStates.GetLength(1) - 1)
             {
                 int tonariX = x + 1;
-                if (ownerWindow.Field[y, tonariX] == DropState.None)
+                if (ownerWindow.field.DropStates[y, tonariX] == DropState.None)
                 {
-                    DropState temp = ownerWindow.Field[y, x];
-                    ownerWindow.Field[y, x] = ownerWindow.Field[y, tonariX];
-                    ownerWindow.Field[y, tonariX] = temp;
+                    DropState temp = ownerWindow.field.DropStates[y, x];
+                    ownerWindow.field.DropStates[y, x] = ownerWindow.field.DropStates[y, tonariX];
+                    ownerWindow.field.DropStates[y, tonariX] = temp;
                 }
             }
             //上と入れ替え
             if (y > 0)
             {
                 int tonariY = y - 1;
-                if (ownerWindow.Field[tonariY, x] == DropState.None)
+                if (ownerWindow.field.DropStates[tonariY, x] == DropState.None)
                 {
-                    DropState temp = ownerWindow.Field[y, x];
-                    ownerWindow.Field[y, x] = ownerWindow.Field[tonariY, x];
-                    ownerWindow.Field[tonariY, x] = temp;
+                    DropState temp = ownerWindow.field.DropStates[y, x];
+                    ownerWindow.field.DropStates[y, x] = ownerWindow.field.DropStates[tonariY, x];
+                    ownerWindow.field.DropStates[tonariY, x] = temp;
                 }
             }
             //下と入れ替え
-            if (y < ownerWindow.Field.GetLength(0) - 1)
+            if (y < ownerWindow.field.DropStates.GetLength(0) - 1)
             {
                 int tonariY = y + 1;
-                if (ownerWindow.Field[tonariY, x] == DropState.None)
+                if (ownerWindow.field.DropStates[tonariY, x] == DropState.None)
                 {
-                    DropState temp = ownerWindow.Field[y, x];
-                    ownerWindow.Field[y, x] = ownerWindow.Field[tonariY, x];
-                    ownerWindow.Field[tonariY, x] = temp;
+                    DropState temp = ownerWindow.field.DropStates[y, x];
+                    ownerWindow.field.DropStates[y, x] = ownerWindow.field.DropStates[tonariY, x];
+                    ownerWindow.field.DropStates[tonariY, x] = temp;
                 }
             }
             //左上と入れ替え
@@ -174,47 +174,47 @@ namespace パズドラWPF
             {
                 int tonariX = x - 1;
                 int tonariY = y - 1;
-                if (ownerWindow.Field[tonariY, tonariX] == DropState.None)
+                if (ownerWindow.field.DropStates[tonariY, tonariX] == DropState.None)
                 {
-                    DropState temp = ownerWindow.Field[y, x];
-                    ownerWindow.Field[y, x] = ownerWindow.Field[tonariY, tonariX];
-                    ownerWindow.Field[tonariY, tonariX] = temp;
+                    DropState temp = ownerWindow.field.DropStates[y, x];
+                    ownerWindow.field.DropStates[y, x] = ownerWindow.field.DropStates[tonariY, tonariX];
+                    ownerWindow.field.DropStates[tonariY, tonariX] = temp;
                 }
             }
             //右上と入れ替え
-            if (x < ownerWindow.Field.GetLength(1) - 1 && y > 0)
+            if (x < ownerWindow.field.DropStates.GetLength(1) - 1 && y > 0)
             {
                 int tonariX = x + 1;
                 int tonariY = y - 1;
-                if (ownerWindow.Field[tonariY, tonariX] == DropState.None)
+                if (ownerWindow.field.DropStates[tonariY, tonariX] == DropState.None)
                 {
-                    DropState temp = ownerWindow.Field[y, x];
-                    ownerWindow.Field[y, x] = ownerWindow.Field[tonariY, tonariX];
-                    ownerWindow.Field[tonariY, tonariX] = temp;
+                    DropState temp = ownerWindow.field.DropStates[y, x];
+                    ownerWindow.field.DropStates[y, x] = ownerWindow.field.DropStates[tonariY, tonariX];
+                    ownerWindow.field.DropStates[tonariY, tonariX] = temp;
                 }
             }
             //左下と入れ替え
-            if (x > 0 && y < ownerWindow.Field.GetLength(0) - 1)
+            if (x > 0 && y < ownerWindow.field.DropStates.GetLength(0) - 1)
             {
                 int tonariX = x - 1;
                 int tonariY = y + 1;
-                if (ownerWindow.Field[tonariY, tonariX] == DropState.None)
+                if (ownerWindow.field.DropStates[tonariY, tonariX] == DropState.None)
                 {
-                    DropState temp = ownerWindow.Field[y, x];
-                    ownerWindow.Field[y, x] = ownerWindow.Field[tonariY, tonariX];
-                    ownerWindow.Field[tonariY, tonariX] = temp;
+                    DropState temp = ownerWindow.field.DropStates[y, x];
+                    ownerWindow.field.DropStates[y, x] = ownerWindow.field.DropStates[tonariY, tonariX];
+                    ownerWindow.field.DropStates[tonariY, tonariX] = temp;
                 }
             }
             //右下と入れ替え
-            if (x < ownerWindow.Field.GetLength(1) - 1 && y < ownerWindow.Field.GetLength(0) - 1)
+            if (x < ownerWindow.field.DropStates.GetLength(1) - 1 && y < ownerWindow.field.DropStates.GetLength(0) - 1)
             {
                 int tonariX = x + 1;
                 int tonariY = y + 1;
-                if (ownerWindow.Field[tonariY, tonariX] == DropState.None)
+                if (ownerWindow.field.DropStates[tonariY, tonariX] == DropState.None)
                 {
-                    DropState temp = ownerWindow.Field[y, x];
-                    ownerWindow.Field[y, x] = ownerWindow.Field[tonariY, tonariX];
-                    ownerWindow.Field[tonariY, tonariX] = temp;
+                    DropState temp = ownerWindow.field.DropStates[y, x];
+                    ownerWindow.field.DropStates[y, x] = ownerWindow.field.DropStates[tonariY, tonariX];
+                    ownerWindow.field.DropStates[tonariY, tonariX] = temp;
                 }
             }
 
@@ -224,28 +224,6 @@ namespace パズドラWPF
         private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
 		{
             this.Close();
-        }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            ReleaseDrop();
-        }
-
-        private void ReleaseDrop()
-        {
-            //ドロップ状態無しを探して、移動中ドロップに状態を変更
-            for (int y = 0; y < ownerWindow.Field.GetLength(0); y++)
-            {
-                for (int x = 0; x < ownerWindow.Field.GetLength(1); x++)
-                {
-                    if (ownerWindow.Field[y, x] == DropState.None)
-                    {
-                        ownerWindow.Field[y, x] = dropState;
-                        ownerWindow.DrawField();
-                    }
-                }
-            }
-            ownerWindow.DropRemoveAndDawn();
         }
     }
 }
