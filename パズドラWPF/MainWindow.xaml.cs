@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MIDIIOCSWrapper;
 
 namespace パズドラWPF
 {
@@ -67,14 +68,46 @@ namespace パズドラWPF
 
 		internal Field field = new Field();
 
+		private bool mouseRocked = false;
+
         /// <summary>
         /// ドロップ移動用ウィンドウ
         /// </summary>
         DropWindow dropWind = null;
 
+		/// <summary>
+		/// ドロップをランダムで選択するためのランダムオブジェクト
+		/// </summary>
+		Random random = new Random();
+
+		/// <summary>
+		/// midi出力デバイス
+		/// </summary>
+		MIDIOUT midiOut = null;
+
+		const byte DefaultDeleteSoundMidiNum = 76;
+		byte deleteSoundMidiNum = DefaultDeleteSoundMidiNum;
+
 		public MainWindow()
         {
             InitializeComponent();
+
+			//MIDIデバイスオープン
+			int midiDeviceNum = MIDIOUT.GetDeviceNum();
+			string midiDeviceName = "";
+			for (int i = 0; i < midiDeviceNum; i++)
+			{
+				midiDeviceName = MIDIOUT.GetDeviceName(i);
+				break;
+			}
+			try
+			{
+				midiOut = new MIDIOUT(midiDeviceName);
+			}
+			catch (MIDIIOException ex)
+			{
+				MessageBox.Show("MIDIデバイスが開けませんでした。\n音はなりません。", this.Title);
+			}
 
             FieldDrop = new Ellipse[Field.FieldHeight, Field.FieldWidth]
             { 
@@ -86,7 +119,6 @@ namespace パズドラWPF
             };
 
             //盤面をランダムに設定
-            Random random = new Random();
             for(int y = 0; y < field.DropStates.GetLength(0); y++)
             {
                 for (int x = 0; x < field.DropStates.GetLength(1); x++)
@@ -171,13 +203,22 @@ namespace パズドラWPF
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-        private async void drop00_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (sender is Ellipse)
-            {
+		private async void drop00_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			//落下処理中は終了
+			if (mouseRocked)
+			{
+				return;
+			}
+
+			//マウスロック開始
+			mouseRocked = true;
+
+			if (sender is Ellipse)
+			{
 				//移動用ウィンドウ
-                dropWind = new DropWindow(((Ellipse)sender).Fill);
-                dropWind.Owner = this;
+				dropWind = new DropWindow(((Ellipse)sender).Fill);
+				dropWind.Owner = this;
 
 				//移動元ドロップ検索＆非表示
 				for (int y = 0; y < field.DropStates.GetLength(0); y++)
@@ -186,8 +227,8 @@ namespace パズドラWPF
 					{
 						if (sender.Equals(FieldDrop[y, x]))
 						{
-                            //移動用ウィンドウに、ドロップ状態渡す。
-                            dropWind.dropState = field.DropStates[y, x];
+							//移動用ウィンドウに、ドロップ状態渡す。
+							dropWind.dropState = field.DropStates[y, x];
 							//移動元ドロップを無しに変更して、再描画。
 							field.DropStates[y, x] = DropState.None;
 							DrawField();
@@ -196,7 +237,7 @@ namespace パズドラWPF
 				}
 
 				//表示
-                dropWind.ShowDialog();
+				dropWind.ShowDialog();
 
 				//ドロップ状態無しを探して、移動中ドロップに状態を変更
 				for (int y = 0; y < field.DropStates.GetLength(0); y++)
@@ -211,20 +252,94 @@ namespace パズドラWPF
 				}
 				DrawField();
 
-				//消すドロップ一覧を取得
-			 	List<List<System.Drawing.Point>> groups = field.GetConnectedDropGroup();
-
-				foreach (var group in groups)
+				field.falling = true;
+				while (field.falling)
 				{
-					foreach (var point in group)
+					field.falling = false;
+					//消すドロップ一覧を取得
+					List<List<System.Drawing.Point>> groups = field.GetConnectedDropGroup();
+
+					//ドロップを消します。
+					foreach (var group in groups)
 					{
-						field.DropStates[point.Y, point.X] = DropState.None;
+						foreach (var point in group)
+						{
+							field.DropStates[point.Y, point.X] = DropState.None;
+						}
+						DrawField();
+						PlayDeleteSound(deleteSoundMidiNum++);
+						await Task.Delay(500);
 					}
 
-					DrawField();
-					await Task.Delay(500);
+					//ドロップを落下させます。
+					//一番上のドロップが一番下まで来ると終了
+					for (int i = 0; i < Field.FieldHeight; i++)
+					{
+						await Task.Delay(200);
+						for (int y = Field.FieldHeight - 2; y >= 0; y--)
+						{
+							for (int x = 0; x < field.DropStates.GetLength(1); x++)
+							{
+								if (field.DropStates[y, x] != DropState.None
+									&& field.DropStates[y + 1, x] == DropState.None)
+								{
+									field.DropStates[y + 1, x] = field.DropStates[y, x];
+									field.DropStates[y, x] = DropState.None;
+									field.falling = true;
+								}
+							}
+						}
+
+						for (int x = 0; x < Field.FieldWidth; x++)
+						{
+							if (field.DropStates[0, x] == DropState.None)
+							{
+								field.DropStates[0, x] = (DropState)random.Next((int)DropState.DropState1, (int)DropState.DropState6);
+							}
+						}
+
+						DrawField();
+					}
 				}
-            }
-        }
+
+				//ドロップの削除が終わったら、MIDIノートナンバーをリセット
+				deleteSoundMidiNum = DefaultDeleteSoundMidiNum;
+
+				//マウスロック解除
+				mouseRocked = false;
+			}
+		}
+
+		private async void PlayDeleteSound(byte noteNum)
+		{
+			if (midiOut == null)
+			{
+				return;
+			}
+
+			//ノートオン
+			byte[] message = new byte[] { 0x90, noteNum, 0x7f };
+			midiOut.PutMIDIMessage(message);
+
+			await Task.Delay(500);
+
+			//ノートオフ
+			message = new byte[] { 0x80, noteNum, 0x7f };
+			midiOut.PutMIDIMessage(message);
+		}
+
+		/// <summary>
+		/// ウィンドウCloseイベント
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void Window_Closed(object sender, EventArgs e)
+		{
+			//MIDIデバイスを閉じる
+			if (midiOut != null)
+			{
+				midiOut.Dispose();
+			}
+		}
 	}
 }

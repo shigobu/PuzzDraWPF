@@ -17,6 +17,8 @@ namespace パズドラWPF
 		/// </summary>
 		internal const int FieldWidth = 6;
 
+		internal bool falling = false;
+
 		/// <summary>
 		/// 盤面のドロップ状態を表します。
 		/// </summary>
