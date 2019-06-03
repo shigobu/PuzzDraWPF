@@ -85,8 +85,8 @@ namespace パズドラWPF
 		/// </summary>
 		MIDIOUT midiOut = null;
 
-		const byte DefaultDeleteSoundMidiNum = 76;
-		byte deleteSoundMidiNum = DefaultDeleteSoundMidiNum;
+		const byte DefaultDeleteSoundNoteNum = 76;
+		byte deleteSoundNoteNum = DefaultDeleteSoundNoteNum;
 
 		public MainWindow()
         {
@@ -126,6 +126,9 @@ namespace パズドラWPF
 					field.DropStates[y,x] = (DropState)random.Next((int)DropState.DropState1, (int)DropState.DropState6);
                 }
             }
+
+			//盤面を、削除できるドロップがない状態で開始
+			DeleteAndFallDrop(false);
 
             //盤面更新
             DrawField();
@@ -252,61 +255,88 @@ namespace パズドラWPF
 				}
 				DrawField();
 
-				field.falling = true;
-				while (field.falling)
-				{
-					field.falling = false;
-					//消すドロップ一覧を取得
-					List<List<System.Drawing.Point>> groups = field.GetConnectedDropGroup();
+				await Task.Delay(100);
 
-					//ドロップを消します。
-					foreach (var group in groups)
-					{
-						foreach (var point in group)
-						{
-							field.DropStates[point.Y, point.X] = DropState.None;
-						}
-						DrawField();
-						PlayDeleteSound(deleteSoundMidiNum++);
-						await Task.Delay(500);
-					}
-
-					//ドロップを落下させます。
-					//一番上のドロップが一番下まで来ると終了
-					for (int i = 0; i < Field.FieldHeight; i++)
-					{
-						await Task.Delay(200);
-						for (int y = Field.FieldHeight - 2; y >= 0; y--)
-						{
-							for (int x = 0; x < field.DropStates.GetLength(1); x++)
-							{
-								if (field.DropStates[y, x] != DropState.None
-									&& field.DropStates[y + 1, x] == DropState.None)
-								{
-									field.DropStates[y + 1, x] = field.DropStates[y, x];
-									field.DropStates[y, x] = DropState.None;
-									field.falling = true;
-								}
-							}
-						}
-
-						for (int x = 0; x < Field.FieldWidth; x++)
-						{
-							if (field.DropStates[0, x] == DropState.None)
-							{
-								field.DropStates[0, x] = (DropState)random.Next((int)DropState.DropState1, (int)DropState.DropState6);
-							}
-						}
-
-						DrawField();
-					}
-				}
+				DeleteAndFallDrop();
 
 				//ドロップの削除が終わったら、MIDIノートナンバーをリセット
-				deleteSoundMidiNum = DefaultDeleteSoundMidiNum;
+				deleteSoundNoteNum = DefaultDeleteSoundNoteNum;
 
 				//マウスロック解除
 				mouseRocked = false;
+			}
+		}
+
+		/// <summary>
+		/// ドロップを消して空いたところに落下させます。
+		/// 落ちコンも考慮してます。
+		/// </summary>
+		/// <param name="delay">falseにすると、遅延なしで消せるドロップの無い盤面を作成します。</param>
+		private async void DeleteAndFallDrop(bool delay = true)
+		{
+			//落ちコンのための無限ループ
+			while (true)
+			{
+				//消すドロップ一覧を取得
+				List<List<System.Drawing.Point>> groups = field.GetConnectedDropGroup();
+
+				//消すドロップがなかったら抜ける
+				if (groups.Count == 0)
+				{
+					break;
+				}
+
+				//ドロップを消します。
+				foreach (var group in groups)
+				{
+					foreach (var point in group)
+					{
+						field.DropStates[point.Y, point.X] = DropState.None;
+					}
+					//ゲーム中のみ
+					if (delay)
+					{
+						DrawField();
+						//消えるときの音再生()
+						PlayDeleteSound(deleteSoundNoteNum++);
+						await Task.Delay(500);
+					}
+				}
+
+				//ドロップを落下させます。
+				//一番上のドロップが一番下まで来ると終了
+				for (int i = 0; i < Field.FieldHeight; i++)
+				{
+					//下から二番目から調べて、下がnoneだったら入れ替え
+					for (int y = Field.FieldHeight - 2; y >= 0; y--)
+					{
+						for (int x = 0; x < field.DropStates.GetLength(1); x++)
+						{
+							if (field.DropStates[y, x] != DropState.None
+								&& field.DropStates[y + 1, x] == DropState.None)
+							{
+								field.DropStates[y + 1, x] = field.DropStates[y, x];
+								field.DropStates[y, x] = DropState.None;
+							}
+						}
+					}
+
+					//新しいドロップをランダムで追加
+					for (int x = 0; x < Field.FieldWidth; x++)
+					{
+						if (field.DropStates[0, x] == DropState.None)
+						{
+							field.DropStates[0, x] = (DropState)random.Next((int)DropState.DropState1, (int)DropState.DropState6);
+						}
+					}
+
+					//ゲーム中のみ
+					if (delay)
+					{
+						await Task.Delay(200);
+						DrawField();
+					}
+				}
 			}
 		}
 
