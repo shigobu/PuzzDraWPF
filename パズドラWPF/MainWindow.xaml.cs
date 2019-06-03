@@ -254,9 +254,9 @@ namespace パズドラWPF
 					}
 				}
 				DrawField();
-
 				await Task.Delay(100);
 
+				//削除と落下と落ちコン
 				DeleteAndFallDrop();
 
 				//ドロップの削除が終わったら、MIDIノートナンバーをリセット
@@ -289,6 +289,11 @@ namespace パズドラWPF
 				//ドロップを消します。
 				foreach (var group in groups)
 				{
+					//ゲーム中のみ
+					if (delay)
+					{
+						await Task.Delay(500);
+					}
 					foreach (var point in group)
 					{
 						field.DropStates[point.Y, point.X] = DropState.None;
@@ -299,7 +304,6 @@ namespace パズドラWPF
 						DrawField();
 						//消えるときの音再生()
 						PlayDeleteSound(deleteSoundNoteNum++);
-						await Task.Delay(500);
 					}
 				}
 
