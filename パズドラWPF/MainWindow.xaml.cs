@@ -257,7 +257,7 @@ namespace パズドラWPF
 				await Task.Delay(100);
 
 				//削除と落下と落ちコン
-				DeleteAndFallDrop();
+				await DeleteAndFallDrop();
 
 				//ドロップの削除が終わったら、MIDIノートナンバーをリセット
 				deleteSoundNoteNum = DefaultDeleteSoundNoteNum;
@@ -272,7 +272,7 @@ namespace パズドラWPF
 		/// 落ちコンも考慮してます。
 		/// </summary>
 		/// <param name="delay">falseにすると、遅延なしで消せるドロップの無い盤面を作成します。</param>
-		private async void DeleteAndFallDrop(bool delay = true)
+		private async Task DeleteAndFallDrop(bool delay = true)
 		{
 			//落ちコンのための無限ループ
 			while (true)
